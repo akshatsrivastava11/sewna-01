@@ -14,7 +14,6 @@ interface FloatingImage {
 }
 
 export default function FloatingBackground() {
-  // Generate floating images with randomized positions and animations
   const images: FloatingImage[] = [
     {
       id: 1,

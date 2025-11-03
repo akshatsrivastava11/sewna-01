@@ -1,11 +1,11 @@
 'use client';
 
-import { Pacifico, Poppins } from "next/font/google";
 import { useState, useRef, useEffect } from "react";
 // Import useRouter for client-side navigation
 import { useRouter } from 'next/navigation'; 
 import FloatingBackground from "@/components/floatingBackground";
 
+import { Pacifico, Poppins } from "next/font/google";
 
 const pacifico = Pacifico({ weight: "400", subsets: ["latin"] });
 const poppins = Poppins({ weight: ["400", "600"], subsets: ["latin"] });

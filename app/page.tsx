@@ -1,32 +1,42 @@
 'use client';
 
-import { useState, useRef, useEffect } from "react";
-// Import useRouter for client-side navigation
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from 'next/navigation'; 
 import FloatingBackground from "@/components/floatingBackground";
-
 import { Pacifico, Poppins } from "next/font/google";
 
 const pacifico = Pacifico({ weight: "400", subsets: ["latin"] });
 const poppins = Poppins({ weight: ["400", "600"], subsets: ["latin"] });
 
-export default function ProjectsShowcase() {
-  const router = useRouter(); // Initialize the router
+type ProjectKey = 'needDesigner' | 'amDesigner';
 
-  const [activeProject, setActiveProject] = useState("needDesigner");
-  const [showDetail, setShowDetail] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const cardRef = useRef(null);
+interface Position {
+  x: number;
+  y: number;
+}
 
-  const projects = {
+interface Projects {
+  [key: string]: string;
+  needDesigner: string;
+  amDesigner: string;
+}
+
+export default function ProjectsShowcase(): React.JSX.Element {
+  const router = useRouter();
+
+  const [activeProject, setActiveProject] = useState<ProjectKey>("needDesigner");
+  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState<Position>({ x: 0, y: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const projects: Projects = {
     needDesigner: "I need a designer",
     amDesigner: "I am a designer",
   };
 
-  // --- Drag Handlers (Kept for completeness, though functionality is now different) ---
-  const handleMouseDown = (e) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (e.button !== 0) return;
     setIsDragging(true);
     setDragStart({
@@ -35,42 +45,51 @@ export default function ProjectsShowcase() {
     });
   };
 
-  const handleMouseMove = (e) => {
+  const handleNativeMouseMove = (ev: MouseEvent): void => {
     if (isDragging) {
       setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
+        x: ev.clientX - dragStart.x,
+        y: ev.clientY - dragStart.y,
       });
     }
   };
 
-  const handleMouseUp = () => {
+  const handleNativeMouseUp = (): void => {
     setIsDragging(false);
   };
 
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("mousemove", handleNativeMouseMove);
+      document.addEventListener("mouseup", handleNativeMouseUp);
     }
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mousemove", handleNativeMouseMove);
+      document.removeEventListener("mouseup", handleNativeMouseUp);
     };
   }, [isDragging, dragStart, position]);
 
-  // --- Render ---
+  const handleProjectClick = (key: ProjectKey): void => {
+    setActiveProject(key);
+    
+    if (key === 'needDesigner') {
+      router.push('/waitlist');
+    } else if (key === 'amDesigner') {
+      router.push('/signup');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden">
       <FloatingBackground/>
       
-      {/* header (Unchanged) */}
+      {/* Header */}
       <header className="flex h-[10vh] items-center fixed top-0 left-5 right-0 z-20 px-4 sm:px-6 md:px-8">
         <a href="/" data-discover="true">
           <div className="flex items-baseline text-[2.5rem] text-[rgb(0,182,127)] transition-transform duration-300 cursor-pointer hover:scale-105">
             <span className={`${pacifico.className} font-thin`}>se</span>
             <span className={`${poppins.className} font-semibold text-[1.7rem] -tracking-[0.2em]`}>
-              W<i className="italic not-italic text-[1.7rem] tracking-normal">N</i>
+              W<i className=" not-italic text-[1.7rem] tracking-normal">N</i>
             </span>
             <span className={`${poppins.className} font-normal text-[2.2rem] -tracking-[0.02em]`}>a.</span>
           </div>
@@ -79,63 +98,50 @@ export default function ProjectsShowcase() {
 
       {/* Main Showcase View */}
       <div
-        className={`min-h-screen flex items-center  justify-between px-16 py-20 gap-24 transition-opacity duration-500 relative ${showDetail ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+        className={`min-h-screen flex items-center justify-between px-16 py-20 gap-24 transition-opacity duration-500 relative ${showDetail ? "opacity-0 pointer-events-none" : "opacity-100"}`}
       >
         
-        {/* Left Section - Draggable Card (Unchanged image logic) */}
-        <div className="flex-1 max-w-md absolute top-20 left-1 ">
+        {/* Left Section - Draggable Card */}
+        <div className="flex-1 max-w-md absolute top-20 left-1">
           <div
             ref={cardRef}
-            className={`bg-gray-900/60 backdrop-blur-xl border h-70  w-80  border-white/5 rounded-3xl p-12 overflow-hidden transition-all duration-300`}
+            className="bg-gray-900/60 backdrop-blur-xl border h-70 w-80 border-white/5 rounded-3xl p-12 overflow-hidden transition-all duration-300"
           >
             {activeProject === "amDesigner" ? (
-         <div className="scale-50 origin-top-left -ml-24 -mt-12 w-[330%] h-[310%]">
-  {/* 👇 Added w-full and h-full to this wrapper div */}
-  <div className="bg-black rounded-lg overflow-hidden w-full h-full"> 
-    <img 
-      src='/iamadesigner.png' 
-      alt="I am a designer showcase"
-      className="w-full h-full object-cover"
-    />
-  </div>
-</div>
+              <div className="scale-50 origin-top-left -ml-24 -mt-12 w-[330%] h-[310%]">
+                <div className="bg-black rounded-lg overflow-hidden w-full h-full"> 
+                  <img 
+                    src='/iamadesigner.png' 
+                    alt="I am a designer showcase"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
             ) : (
-           <div className="scale-50 origin-top-left -ml-24 -mt-12 w-[330%] h-[310%]">
-  {/* 👇 Added w-full and h-full to this wrapper div */}
-  <div className="bg-black rounded-lg overflow-hidden w-full h-full"> 
-    <img 
-      src='/ineedadesigner.png' 
-      alt="I am a designer showcase"
-      className="w-full h-full object-cover"
-    />
-  </div>
-</div>
+              <div className="scale-50 origin-top-left -ml-24 -mt-12 w-[330%] h-[310%]">
+                <div className="bg-black rounded-lg overflow-hidden w-full h-full"> 
+                  <img 
+                    src='/ineedadesigner.png' 
+                    alt="I need a designer showcase"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Right Section - Projects List (Updated onClick) */}
+        {/* Right Section - Projects List */}
         <div className="absolute bottom-25 right-16 flex flex-col items-end">
           <div className="text-right">
-            {Object.entries(projects).map(([key, name]) => (
+            {(Object.entries(projects) as [ProjectKey, string][]).map(([key, name]) => (
               <div
                 key={key}
                 className={`text-6xl font-light leading-tight mb-2 cursor-pointer transition-all duration-300 pr-10 relative ${
                   activeProject === key ? "text-white" : "text-gray-700 hover:text-white hover:-translate-x-3"
                 }`}
                 onMouseEnter={() => setActiveProject(key)}
-                onClick={() => {
-                  setActiveProject(key); // Still update the active project state
-                  
-                  // --- NEW ROUTING LOGIC ---
-                  if (key === 'needDesigner') {
-                    router.push('/waitlist'); // Navigate to /waitlist
-                  } else if (key === 'amDesigner') {
-                    router.push('/signup'); // Navigate to /signin
-                  }
-                  
-                  // Removed setShowDetail(true) since we are navigating away
-                }}
+                onClick={() => handleProjectClick(key)}
               >
                 {name}
                 <span
@@ -149,17 +155,15 @@ export default function ProjectsShowcase() {
         </div>
       </div>
 
-      {/* Detail View - REMOVED or kept hidden */}
-      {/* Since you are routing away, you don't need the Detail View logic, 
-      but I'm leaving the element hidden just in case it's needed elsewhere. */}
+      {/* Detail View */}
       <div
         className={`fixed inset-0 bg-black z-40 flex flex-col items-center justify-center px-16 py-20 transition-opacity duration-500 ${showDetail ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       >
-        {/* ... (Detail View content remains, but will be bypassed by routing) ... */}
-         {/* Close Button */}
+        {/* Close Button */}
         <button
           onClick={() => setShowDetail(false)}
           className="absolute top-10 right-16 text-5xl text-gray-600 hover:text-white transition-all duration-300 hover:rotate-90 w-12 h-12 flex items-center justify-center leading-none"
+          aria-label="Close detail view"
         >
           ×
         </button>
@@ -168,7 +172,6 @@ export default function ProjectsShowcase() {
 
         {/* Detail Content Grid */}
         <div className="grid grid-cols-2 gap-8 max-w-6xl w-full mb-24">
-          {/* ... (Detail Cards) ... */}
           <div className="bg-gray-900/40 backdrop-blur-sm border border-white/5 rounded-2xl p-9 transition-all duration-300 hover:border-blue-600/20 hover:-translate-y-1">
             <div className="text-xs font-semibold tracking-[2px] text-blue-600 mb-5">DEPENDENCIES</div>
             <div className="text-sm leading-relaxed text-gray-400">

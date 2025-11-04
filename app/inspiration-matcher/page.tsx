@@ -6,22 +6,51 @@ import { Pacifico, Poppins } from "next/font/google"
 const pacifico = Pacifico({ weight: "400", subsets: ["latin"] })
 const poppins = Poppins({ weight: ["400", "600"], subsets: ["latin"] })
 
-const VisualInspirationMatcher = () => {
-  const [step, setStep] = useState(1)
-  const [uploadedImage, setUploadedImage] = useState(null)
-  const [markers, setMarkers] = useState([])
-  const [selectedElements, setSelectedElements] = useState([])
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [showUploadModal, setShowUploadModal] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filteredDesigners, setFilteredDesigners] = useState([])
-  const [selectedDesigner, setSelectedDesigner] = useState(null)
-  const [showDesignerModal, setShowDesignerModal] = useState(false)
-  const fileInputRef = useRef(null)
-  const imageRef = useRef(null)
+// Types
+interface DesignElement {
+  id: string
+  label: string
+  color: string
+}
+
+interface Marker {
+  id: number
+  x: number
+  y: number
+  element: string
+}
+
+interface Designer {
+  id: number
+  name: string
+  specialty: string
+  rating: number
+  reviews: number
+  location: string
+  turnaround: string
+  priceRange: string
+  image: string
+  portfolioMatch: number
+  strengths: string[]
+  recentWork: string
+}
+
+const VisualInspirationMatcher: React.FC = () => {
+  const [step, setStep] = useState<number>(1)
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+  const [markers, setMarkers] = useState<Marker[]>([])
+  const [selectedElements, setSelectedElements] = useState<string[]>([])
+  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
+  const [showUploadModal, setShowUploadModal] = useState<boolean>(false)
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [filteredDesigners, setFilteredDesigners] = useState<Designer[]>([])
+  const [selectedDesigner, setSelectedDesigner] = useState<Designer | null>(null)
+  const [showDesignerModal, setShowDesignerModal] = useState<boolean>(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null)
 
   // Design elements that users can tag
-  const designElements = [
+  const designElements: DesignElement[] = [
     { id: "sleeve", label: "Sleeve Style", color: "bg-pink-500" },
     { id: "neckline", label: "Neckline", color: "bg-purple-500" },
     { id: "embroidery", label: "Embroidery Pattern", color: "bg-blue-500" },
@@ -31,7 +60,7 @@ const VisualInspirationMatcher = () => {
   ]
 
   // Extended designer database with more dummy data
-  const allDesigners = [
+  const allDesigners: Designer[] = [
     {
       id: 1,
       name: "Designer 1",
@@ -201,13 +230,14 @@ const VisualInspirationMatcher = () => {
       recentWork: "http://localhost:2000/portfolio/work-12.jpg",
     },
   ]
+
   // Initialize filtered designers with all designers
   React.useEffect(() => {
     setFilteredDesigners(allDesigners)
   }, [])
 
   // Search functionality
-  const handleSearch = (query) => {
+  const handleSearch = (query: string): void => {
     setSearchQuery(query)
 
     if (!query.trim()) {
@@ -227,12 +257,12 @@ const VisualInspirationMatcher = () => {
     setFilteredDesigners(filtered)
   }
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0]
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
       reader.onload = (event) => {
-        setUploadedImage(event.target.result)
+        setUploadedImage(event.target?.result as string)
         setStep(2)
         setShowUploadModal(false)
       }
@@ -240,7 +270,7 @@ const VisualInspirationMatcher = () => {
     }
   }
 
-  const handleImageClick = (e) => {
+  const handleImageClick = (e: React.MouseEvent<HTMLImageElement>): void => {
     if (!imageRef.current) return
 
     const rect = imageRef.current.getBoundingClientRect()
@@ -248,7 +278,7 @@ const VisualInspirationMatcher = () => {
     const y = ((e.clientY - rect.top) / rect.height) * 100
 
     if (selectedElements.length > 0) {
-      const newMarker = {
+      const newMarker: Marker = {
         id: Date.now(),
         x,
         y,
@@ -259,15 +289,15 @@ const VisualInspirationMatcher = () => {
     }
   }
 
-  const toggleElement = (elementId) => {
+  const toggleElement = (elementId: string): void => {
     setSelectedElements([elementId])
   }
 
-  const removeMarker = (markerId) => {
+  const removeMarker = (markerId: number): void => {
     setMarkers(markers.filter((m) => m.id !== markerId))
   }
 
-  const handleAnalyze = () => {
+  const handleAnalyze = (): void => {
     setIsAnalyzing(true)
     setTimeout(() => {
       setIsAnalyzing(false)
@@ -278,26 +308,26 @@ const VisualInspirationMatcher = () => {
     }, 2000)
   }
 
-  const getElementColor = (elementId) => {
+  const getElementColor = (elementId: string): string => {
     return designElements.find((e) => e.id === elementId)?.color || "bg-gray-500"
   }
 
-  const getElementLabel = (elementId) => {
+  const getElementLabel = (elementId: string): string => {
     return designElements.find((e) => e.id === elementId)?.label || ""
   }
 
-  const handleViewDesigner = (designer) => {
+  const handleViewDesigner = (designer: Designer): void => {
     setSelectedDesigner(designer)
     setShowDesignerModal(true)
   }
 
-  const handleCloseDesignerModal = (e) => {
+  const handleCloseDesignerModal = (e: React.MouseEvent): void => {
     e.preventDefault()
     e.stopPropagation()
     setShowDesignerModal(false)
   }
 
-  const handleOverlayClick = (e) => {
+  const handleOverlayClick = (e: React.MouseEvent): void => {
     if (e.target === e.currentTarget) {
       setShowDesignerModal(false)
     }
@@ -795,7 +825,7 @@ const VisualInspirationMatcher = () => {
   )
 }
 
-function page() {
+const Page: React.FC = () => {
   return (
     <div>
       <VisualInspirationMatcher />
@@ -803,4 +833,4 @@ function page() {
   )
 }
 
-export default page
+export default Page

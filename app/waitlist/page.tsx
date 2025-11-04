@@ -76,7 +76,12 @@ export default function WaitlistSection() {
         <Link href="/" className="inline-block text-gray-400 hover:text-white transition-colors mt-4">
           ← Go back
         </Link>
+     
+        
       </div>
+         <Link href="/inspiration-matcher" className="inline-block text-gray-400 font-bold hover:text-white transition-colors mt-4">
+          → Inpiration Matcher
+        </Link>
     </div>
   )
 }

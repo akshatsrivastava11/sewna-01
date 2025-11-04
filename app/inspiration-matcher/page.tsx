@@ -352,7 +352,6 @@ const VisualInspirationMatcher: React.FC = () => {
         {/* Page Intro */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-gray-900/60 backdrop-blur-sm border border-white/5 px-4 py-2 rounded-full mb-4">
-            <Sparkles className="w-4 h-4 text-purple-400" />
             <span className="text-sm font-medium text-gray-300">Visual Inspiration Matcher</span>
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">Find Your Perfect Designer</h1>

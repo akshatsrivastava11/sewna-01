@@ -456,7 +456,7 @@ const VisualInspirationMatcher: React.FC = () => {
                         <td className="px-6 py-4">
                           <button
                             onClick={() => handleViewDesigner(designer)}
-                            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-[#00b67f] text-white text-sm font-medium rounded-lg transition-colors"
                           >
                             <Eye className="w-4 h-4" />
                             View

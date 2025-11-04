@@ -25,7 +25,7 @@ export default function WaitlistSection() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 py-12">
       {/* Logo */}
-              <header className="flex items-center fixed  align-middle text-center z-20 justify-center left-180 top-15  ">
+              <header className="flex items-center fixed  align-middle text-center z-20 justify-center left-180 top-8  ">
           <a href="/" data-discover="true">
             <div className="flex items-baseline text-[2.5rem] text-[rgb(0,182,127)] transition-transform duration-300 cursor-pointer hover:scale-105">
               <span className={`${pacifico.className} font-thin`}>se</span>
